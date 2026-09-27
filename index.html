@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeroNote</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-icon">📓</span>
+        <span>NeroNote</span>
+      </div>
+
+      <div class="section-head">
+        <span>MEUS CADERNOS</span>
+        <button id="newNoteBtn" class="add-btn" title="Novo caderno">+</button>
+      </div>
+
+      <div id="notesList" class="notes-list"></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">CADERNO</div>
+          <h1 id="noteTitle">Nenhum caderno</h1>
+        </div>
+
+        <div id="actions" class="actions hidden">
+          <div id="viewSwitch" class="view-switch" role="tablist">
+            <button id="viewCodeBtn" class="view-btn" title="Somente código do Markdown">Somente código</button>
+            <button id="viewSplitBtn" class="view-btn active" title="Tela dividida">Tela dividida</button>
+          </div>
+          <button id="renameBtn" title="Renomear caderno">Renomear</button>
+          <button id="deleteBtn" class="danger" title="Excluir caderno">Excluir</button>
+        </div>
+      </header>
+
+      <section class="paper">
+        <div id="toolbar" class="toolbar hidden" role="toolbar" aria-label="Formatação">
+          <button type="button" class="tool-btn" data-action="bold" title="Negrito (Ctrl+B)" aria-label="Negrito">**B**</button>
+          <button type="button" class="tool-btn" data-action="italic" title="Itálico (Ctrl+I)" aria-label="Itálico">*I*</button>
+          <button type="button" class="tool-btn" data-action="strikethrough" title="Riscado (Ctrl+Shift+X)" aria-label="Riscado">~~S~~</button>
+          <button type="button" class="tool-btn" data-action="code" title="Código inline (Ctrl+`)" aria-label="Código inline">`{}`</button>
+          <div class="tool-sep"></div>
+          <button type="button" class="tool-btn" data-action="heading1" title="Título 1 (Ctrl+1)" aria-label="Título 1">H1</button>
+          <button type="button" class="tool-btn" data-action="heading2" title="Título 2 (Ctrl+2)" aria-label="Título 2">H2</button>
+          <button type="button" class="tool-btn" data-action="heading3" title="Título 3 (Ctrl+3)" aria-label="Título 3">H3</button>
+          <div class="tool-sep"></div>
+          <button type="button" class="tool-btn" data-action="ul" title="Lista não ordenada (Ctrl+Shift+8)" aria-label="Lista com marcadores">• Lista</button>
+          <button type="button" class="tool-btn" data-action="ol" title="Lista ordenada (Ctrl+Shift+9)" aria-label="Lista numerada">1. Lista</button>
+          <button type="button" class="tool-btn" data-action="task" title="Lista de tarefas (Ctrl+Shift+T)" aria-label="Lista de tarefas">✓ Tarefa</button>
+          <div class="tool-sep"></div>
+          <button type="button" class="tool-btn" data-action="quote" title="Citação (Ctrl+Shift+Q)" aria-label="Bloco de citação">❝</button>
+          <button type="button" class="tool-btn" data-action="codeblock" title="Bloco de código (Ctrl+Shift+C)" aria-label="Bloco de código">{ }</button>
+          <button type="button" class="tool-btn" data-action="hr" title="Linha horizontal (Ctrl+Shift+H)" aria-label="Linha horizontal">—</button>
+          <div class="tool-sep"></div>
+          <button type="button" class="tool-btn" data-action="link" title="Link (Ctrl+K)" aria-label="Inserir link">🔗</button>
+          <button type="button" class="tool-btn" data-action="image" title="Imagem (Ctrl+Shift+I)" aria-label="Inserir imagem">🖼</button>
+          <button type="button" class="tool-btn" data-action="table" title="Tabela (Ctrl+Shift+L)" aria-label="Inserir tabela">⊞</button>
+          <button type="button" class="tool-btn formula-tool" data-action="formula" title="Inserir fórmula matemática" aria-label="Inserir fórmula matemática">Σ Fórmula</button>
+          <button type="button" class="tool-btn" data-action="emoji" title="Inserir emoji" aria-label="Inserir emoji">😀</button>
+          <div class="tool-sep"></div>
+          <button type="button" class="tool-btn" data-action="undo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">↶</button>
+          <button type="button" class="tool-btn" data-action="redo" title="Refazer (Ctrl+Y)" aria-label="Refazer">↷</button>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <div class="empty-icon">📖</div>
+          <h2>Seu caderno</h2>
+          <p>Crie um caderno e comece a escrever.</p>
+          <button id="emptyNewBtn">+ Novo caderno</button>
+        </div>
+
+        <div id="split" class="split hidden">
+          <textarea id="editor" class="editor" placeholder="Escreva em Markdown..." spellcheck="true"></textarea>
+          <div id="preview" class="preview" aria-label="Preview do Markdown"></div>
+        </div>
+      </section>
+
+      <footer class="statusbar">
+        <span id="saveStatus">—</span>
+        <span id="wordCount">0 palavras</span>
+      </footer>
+    </main>
+  </div>
+
+  <div id="iconModal" class="modal hidden">
+    <div class="modal-card">
+      <h2>Mudar ícone</h2>
+      <p>Escolha um ícone para este caderno.</p>
+      <div id="iconList" class="icon-grid"></div>
+      <div class="modal-actions">
+        <button id="cancelIconModal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <h2 id="modalTitle">Novo caderno</h2>
+      <p id="modalText">Escolha um nome para o caderno.</p>
+      <input id="modalInput" type="text" maxlength="50" autocomplete="off">
+
+      <div class="modal-actions">
+        <button id="cancelModal">Cancelar</button>
+        <button id="confirmModal" class="primary">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="formulaModal" class="modal hidden">
+    <div class="modal-card formula-modal-card">
+      <div class="formula-modal-head">
+        <div>
+          <h2>Fórmula matemática</h2>
+          <p>Escreva em sintaxe LaTeX. O resultado aparece abaixo.</p>
+        </div>
+        <button id="closeFormulaModal" class="modal-close" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <label class="formula-label" for="formulaInput">Fórmula</label>
+      <textarea id="formulaInput" class="formula-input" rows="4" spellcheck="false"
+        placeholder="Ex.: \frac{x^2 + 3x + 2}{x + 1}"></textarea>
+
+      <div class="formula-templates">
+        <span>Modelos:</span>
+        <button type="button" class="formula-template" data-formula="\frac{a}{b}">Fração</button>
+        <button type="button" class="formula-template" data-formula="x^2">Potência</button>
+        <button type="button" class="formula-template" data-formula="\sqrt{x}">Raiz</button>
+        <button type="button" class="formula-template" data-formula="\sum_{i=1}^{n} i^2">Somatório</button>
+        <button type="button" class="formula-template" data-formula="\frac{-b \pm \sqrt{b^2-4ac}}{2a}">Bhaskara</button>
+        <button type="button" class="formula-template" data-formula="p \rightarrow q">Lógica</button>
+      </div>
+
+      <div class="formula-preview-wrap">
+        <span class="formula-label">Pré-visualização</span>
+        <div id="formulaPreview" class="formula-preview">Digite uma fórmula para visualizar.</div>
+      </div>
+
+      <div class="formula-help">
+        <strong>Atalhos:</strong>
+        <code>^</code> potência · <code>_</code> índice · <code>\frac{a}{b}</code> fração ·
+        <code>\sqrt{x}</code> raiz · <code>\pi</code> π
+      </div>
+
+      <div class="modal-actions">
+        <button id="cancelFormulaModal" type="button">Cancelar</button>
+        <button id="insertFormulaBtn" class="primary" type="button">Inserir fórmula</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="emojiPicker" class="emoji-picker hidden"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
