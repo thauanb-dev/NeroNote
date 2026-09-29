@@ -1299,5 +1299,19 @@ function nodeToMarkdown(node) {
   return out;
 }
 
+const appRoot = document.querySelector(".app");
+const showSidebarBtn = document.getElementById("showSidebarBtn");
+
+function setSidebarHidden(hidden) {
+  appRoot.classList.toggle("sidebar-hidden", hidden);
+  showSidebarBtn.classList.toggle("hidden", !hidden);
+  localStorage.setItem("neroNoteSidebar", hidden ? "hidden" : "visible");
+}
+
+document.getElementById("toggleSidebarBtn").addEventListener("click", () => setSidebarHidden(true));
+showSidebarBtn.addEventListener("click", () => setSidebarHidden(false));
+
+setSidebarHidden(localStorage.getItem("neroNoteSidebar") === "hidden");
+
 setViewMode(viewMode);
 render();

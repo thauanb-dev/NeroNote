@@ -90,6 +90,39 @@ button {
   color: var(--text);
 }
 
+.section-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.app.sidebar-hidden .sidebar {
+  display: none;
+}
+
+.show-sidebar-btn {
+  position: fixed;
+  top: 18px;
+  left: 12px;
+  z-index: 50;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.show-sidebar-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.app.sidebar-hidden .topbar {
+  padding-left: 56px;
+}
+
 .notes-list {
   display: flex;
   flex-direction: column;
